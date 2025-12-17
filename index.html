@@ -1,36 +1,36 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@小涵大王</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+<!DOCTYPE html>   <！DOCTYPE html   超文本标记语言 >
+<html   超文本标记语言 lang   朗   朗="zh-CN"   “应用”>
+<head   头>
+    <meta   元 chars   年代et   字符集   字符集="UTF-8"   “utf - 8”>
+    <meta   元 name   名字   名字="viewport"   “视口” content   内容   内容="width=device-width, initial-s   年代cale=1.0"“宽度=设备宽度,初始= 1.0”>
+    <title   标题>@小涵大王</title   标题>
+    <link   链接 rel="s   年代tyles   年代heet"   “样式表” href="https   年代://cdnjs   年代.cloudflare.com/ajax/libs   年代/font-awes   年代ome/6.4.0/cs   年代s   年代/all.min.cs   年代s   年代">
+       < >风格<s   年代   年代tyle   风格>
         * {
-            margin: 0;
-            padding: 0;
+               保证金:0;margin   保证金   保证金: 0;
+               填充:0;padding   填充   填充: 0;
             box-sizing: border-box;
-            font-family: "Microsoft YaHei", "微软雅黑", "Microsoft JhengHei", sans-serif;
+            font-family   字体类型   字体类型: "Microsoft YaHei", "微软雅黑", "Microsoft JhengHei"   “微软JhengHei”, sans-serif;
         }
         
-        body {
-            background: linear-gradient(135deg, #ffffff 0%, #979797 100%);
-            color: #333333;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-            line-height: 1.6;
+           身体{body   身体   身体 {
+            背景：线性渐变（135度，#ffffff 0%, #979797 100%）；background: linear-gradient   线性渐变(135deg, #ffffff 0%, #979797 100%);
+               颜色:# 333333;color   颜色   颜色: #333333;
+               最小高度:100 vh;min-height   最小高度   最小高度: 100vh;
+               显示:flex;display   显示   显示: flex;
+               flex-direction:列;flex-direction: column   列;
+               对齐项目:中心;align-items   对齐项目   对齐项目: center   中心   中心;
+               填充：40px 20px；padding: 40px 20px;
+               行高:1.6;line-height   行高   行高: 1.6;
         }
         
-        .container {
+        .   ．容器{container   容器   容器 {
             max-width: 900px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 40px;
+               宽度:100%;width   宽度   宽度: 100%;
+               显示:flex;display   显示   显示: flex;
+               flex-direction:列;flex-direction: column   列;
+               对齐项目:中心;align-items   对齐项目   对齐项目: center;
+            gap   差距   差距: 40px;
         }
         
         /* 头像样式 */
@@ -648,37 +648,37 @@
         .loading {
             display: inline-block;
             width: 20px;
-            height: 20px;
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
+            height: 20px;   高度:20 px;
+            border: 2px solid rgba(0, 0, 0, 0.1);边框：2px solid rgba(0,0,0,0.1)；
+            border-radius: 50%;   这个特性:50%;
             border-top-color: #666666;
-            animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;动画：自旋1s线性无限；
             margin-left: 10px;
         }
         
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }To {transform: rotate（360度）；}
         }
-    </style>
-</head>
-<body>
-    <div class="container">
+    </style>   > < /风格
+</head>   < / >负责人
+<body>   身体< >
+    <div class="container">   < div class = " container”>
         <!-- 头像部分 -->
         <div class="avatar-container">
-            <div class="avatar">
+            <div class="avatar">   <分区班”=“化身”>
                 <img src="./小涵大王.jpg" alt="头像">
             </div>
             <div class="poem">泻水置平地，各自东西南北流</div>
         </div>
         
         <!-- 音乐播放器 -->
-        <div class="music-player">
+        <div class="music-player">< div class = "音乐" >
             <div class="player-header">
                 <h2 class="player-title">小涵大王</h2>
                 <select id="music-select" class="music-select">
                     <option value="0">选择音乐...</option>
                     <option value="1">破碎的爱情</option>
-                </select>
+                </select>   < /选择>
             </div>
             
             <div class="now-playing" id="now-playing">未选择音乐</div>
@@ -697,19 +697,19 @@
             <div class="player-controls">
                 <button class="control-btn" id="prev-btn">
                     <i class="fas fa-step-backward"></i>
-                </button>
+                </button>   > < /按钮
                 <button class="control-btn play-btn" id="play-btn">
                     <i class="fas fa-play"></i>
-                </button>
+                </button>   > < /按钮
                 <button class="control-btn" id="next-btn">
                     <i class="fas fa-step-forward"></i>
-                </button>
+                </button>   > < /按钮
             </div>
         </div>
         
         <!-- 短语容器 -->
-        <div class="phrases-container">
-            <h2 class="phrases-title">小涵大王</h2>
+        <div class   类="phrases-container">
+            <h2 class   类="phrases-title">小涵大王</h2>
             <div id="admin-indicator" class="admin-indicator" style="display: none;">
                 <i class="fas fa-user-shield"></i> 管理员模式 - 您可以管理短语
             </div>
@@ -720,38 +720,38 @@
                 <input type="text" id="phrase-input" class="phrase-input" placeholder="请输入新的短语...">
                 <button id="add-phrase-btn" class="add-phrase-btn">
                     <i class="fas fa-plus"></i> 添加短语
-                </button>
+                </button>   > < /按钮
             </div>
         </div>
     </div>
     
     <!-- 模式提示模态框 -->
     <div id="mode-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content">< div class   类 = "模式内容" >
             <h3 id="modal-title">模式提示</h3>
             <p id="modal-message">您当前的访问模式信息</p>
             <button class="modal-btn" id="modal-close-btn">知道了</button>
         </div>
     </div>
 
-    <script>
+    <script>   < >脚本
         // 音乐数据
         const musicList = [
             {
-                id: 1,
-                title: "破碎的爱情",
-                duration: "3:45",
-                src: "./黄美珍 - 破坏的爱情.mp3"
+                id: 1,   id: 1、
+                title   标题: "破碎的爱情",
+                duration   持续时间: "3:45",   持续时间:“发起”,
+                src: "./破坏的爱情.mp3"
             }
         ];
         
         // 短语数据 - 使用localStorage存储
-        let phrases = [];
+        let phrases = [];   让phrases = []；
         
         // 检查URL参数，判断是否为管理员模式
-        const urlParams = new URLSearchParams(window.location.search);
-        const password = urlParams.get('password');
-        const isAdminMode = password === 'xiaoguan';
+        const urlParams = new URLSearchParams(window.location.search);const   常量 urlParams = new   新 URLSearchParams(window   窗口.location   位置.search   搜索)；
+        const password = urlParams.get('password');const   常量 password   密码 = urlParams.get   得到('password'   “密码”)；
+        const isAdminMode = password === 'xiaoguan';const   常量 isAdminMode = password   密码 == 'xiaoguan'   “xiaoguan”；
         
         // 初始化变量
         let currentMusicIndex = 0;
@@ -1221,4 +1221,5 @@
     </script>
 </body>
 </html>
+
 
