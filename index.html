@@ -3,1148 +3,760 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@小涵大王</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>忍3题库搜索</title>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+    <script>
+        // 如果 CDN 加载失败，尝试备用 CDN
+        if (typeof Fuse === 'undefined') {
+            document.write('<script src="https://unpkg.com/fuse.js@7.0.0/dist/fuse.min.js"><\/script>');
+        }
+    </script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Microsoft YaHei", "微软雅黑", "Microsoft JhengHei", sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #ffffff 0%, #979797 100%);
-            color: #333333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                         "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-            line-height: 1.6;
+            justify-content: center;
+            align-items: flex-start;
         }
-        
+
         .container {
-            max-width: 900px;
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 40px;
-        }
-        
-        /* 头像样式 */
-        .avatar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-        }
-        
-        .avatar {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 5px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            animation: rotate 20s linear infinite;
-            background-color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 80px;
-            color: #666666;
-        }
-        
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* 诗句样式 */
-        .poem {
-            color: #666666;
-            font-size: 22px;
-            text-align: center;
-            font-style: normal;
-            margin: 20px 0;
-            max-width: 600px;
-            line-height: 1.8;
-            letter-spacing: 1px;
-        }
-        
-        /* 音乐播放器样式 */
-        .music-player {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 30px;
-            width: 100%;
-            max-width: 700px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
-        }
-        
-        .player-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .player-title {
-            font-size: 24px;
-            color: #333333;
-        }
-        
-        .music-select {
-            background-color: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(0, 0, 0, 0.2);
-            color: #333333;
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 16px;
-            width: 100%;
-            max-width: 300px;
-            cursor: pointer;
-        }
-        
-        .player-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            margin-top: 30px;
-        }
-        
-        .control-btn {
-            background-color: rgba(100, 100, 100, 0.1);
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            color: #333333;
-            font-size: 22px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .control-btn:hover {
-            background-color: rgba(100, 100, 100, 0.2);
-            transform: scale(1.05);
-        }
-        
-        .play-btn {
-            width: 70px;
-            height: 70px;
-            font-size: 26px;
-            background-color: rgba(100, 100, 100, 0.15);
-        }
-        
-        .progress-container {
-            margin-top: 25px;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background-color: rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-        
-        .progress {
-            height: 100%;
-            background-color: #666666;
-            width: 0%;
-            border-radius: 4px;
-            transition: width 0.1s linear;
-        }
-        
-        .time-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #666666;
-        }
-        
-        .now-playing {
-            text-align: center;
+            max-width: 720px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            padding: 28px 24px;
             margin-top: 20px;
-            font-size: 18px;
-            color: #333333;
-            height: 27px;
         }
-        
-        /* 短语容器样式 */
-        .phrases-container {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 30px;
-            width: 100%;
-            max-width: 700px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
-        }
-        
-        .phrases-title {
+
+        h2 {
             font-size: 24px;
-            color: #333333;
-            margin-bottom: 25px;
+            color: #333;
             text-align: center;
+            margin-bottom: 6px;
         }
-        
-        .phrases-list {
-            list-style-type: none;
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        
-        /* 滚动条样式 */
-        .phrases-list::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .phrases-list::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 3px;
-        }
-        
-        .phrases-list::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 3px;
-        }
-        
-        .phrases-list::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.3);
-        }
-        
-        /* 短语项样式 */
-        .phrase-item {
-            background-color: rgba(0, 0, 0, 0.03);
-            padding: 18px 20px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: #333333;
-            position: relative;
-            min-height: 60px;
-        }
-        
-        .phrase-item:hover {
-            background-color: rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
-        }
-        
-        /* 短语文本容器 */
-        .phrase-text {
-            flex: 1;
+
+        .subtitle {
             text-align: center;
-            padding: 0 10px;
-            word-break: break-word;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 24px;
-            line-height: 1.5;
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 20px;
         }
-        
-        .phrase-controls {
+
+        .search-box {
             display: flex;
             gap: 10px;
-            margin-left: 15px;
-            flex-shrink: 0;
-            align-items: center;
+            margin-bottom: 20px;
         }
-        
-        /* 短语按钮 */
-        .phrase-btn {
-            background: none;
+
+        .input-wrap {
+            position: relative;
+            flex: 1;
+        }
+
+        #search {
+            width: 100%;
+            padding: 14px 44px 14px 16px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        #search:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
             border: none;
-            color: #666666;
+            background: #ddd;
+            color: #fff;
+            border-radius: 50%;
             cursor: pointer;
             font-size: 14px;
-            padding: 6px 10px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-            height: 30px;
+            line-height: 1;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .clear-btn:hover {
+            background: #bbb;
+        }
+
+        .clear-btn.show {
+            display: flex;
+        }
+
+        #searchBtn {
+            padding: 0 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+            white-space: nowrap;
+        }
+
+        #searchBtn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        #searchBtn:active {
+            transform: translateY(0);
+            opacity: 0.9;
+        }
+
+        #result {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .card {
+            border: 1px solid #eee;
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 12px;
+            background: #fafafa;
+            transition: transform 0.15s, box-shadow 0.15s;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .card .question {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .card .answer {
+            color: #16a34a;
+            font-size: 16px;
+            margin-top: 10px;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 6px;
         }
-        
-        .phrase-btn:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-        
-        .pin-btn { color: #ff9900; }
-        .private-btn { color: #666666; }
-        .public-btn { color: #4CAF50; }
-        .delete-btn { color: #ff4444; }
-        
-        .pinned {
-            background-color: rgba(255, 153, 0, 0.1);
-            border-left: 4px solid #ff9900;
-        }
-        
-        .private {
-            opacity: 0.7;
-            background-color: rgba(255, 0, 0, 0.05);
-        }
-        
-        .public { opacity: 1; }
-        
-        /* 短语输入区域 */
-        .phrase-input-container {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        
-        .phrase-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            background-color: rgba(255, 255, 255, 0.9);
-            text-align: center;
-        }
-        
-        .add-phrase-btn {
-            background-color: #666666;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .add-phrase-btn:hover {
-            background-color: #555555;
-            transform: translateY(-2px);
-        }
-        
-        /* 管理员提示 */
-        .admin-indicator {
-            background-color: rgba(102, 102, 102, 0.1);
-            padding: 8px 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #666666;
-            text-align: center;
-        }
-        
-        /* 模态框样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+
+        .card .answer::before {
+            content: "✓";
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transform: translateY(0);
-            animation: slideUp 0.3s ease;
-        }
-        
-        .modal h3 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-        
-        .modal p {
-            margin-bottom: 20px;
-            color: #666;
-            line-height: 1.6;
-        }
-        
-        .modal-btn {
-            background-color: #666666;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .modal-btn:hover {
-            background-color: #555555;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .container {
-                gap: 30px;
-                padding: 20px 15px;
-            }
-            
-            .avatar {
-                width: 150px;
-                height: 150px;
-            }
-            
-            .poem {
-                font-size: 18px;
-                padding: 0 15px;
-            }
-            
-            .music-player, .phrases-container {
-                padding: 25px 20px;
-            }
-            
-            .player-controls {
-                gap: 20px;
-                margin-top: 25px;
-            }
-            
-            .control-btn {
-                width: 55px;
-                height: 55px;
-                font-size: 20px;
-            }
-            
-            .play-btn {
-                width: 65px;
-                height: 65px;
-                font-size: 24px;
-            }
-            
-            .phrase-text {
-                max-width: 60%;
-                font-size: 15px;
-                display: block;
-            }
-            
-            .phrase-controls {
-                flex-direction: row;
-                gap: 8px;
-            }
-            
-            .phrase-btn {
-                padding: 4px 8px;
-                font-size: 13px;
-                height: 28px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .phrase-item {
-                flex-direction: column;
-                align-items: center;
-                padding: 15px;
-                text-align: center;
-            }
-            
-            .phrase-text {
-                text-align: center;
-                margin-bottom: 15px;
-                padding: 0;
-                width: 100%;
-                max-width: 100%;
-                display: block;
-            }
-            
-            .phrase-controls {
-                width: 100%;
-                justify-content: center;
-                margin-left: 0;
-            }
-            
-            .container {
-                gap: 25px;
-            }
-            
-            .avatar {
-                width: 130px;
-                height: 130px;
-                border-width: 4px;
-            }
-            
-            .poem {
-                font-size: 16px;
-                margin: 10px 0;
-            }
-            
-            .music-player, .phrases-container {
-                padding: 20px 15px;
-                border-radius: 15px;
-            }
-            
-            .player-title, .phrases-title {
-                font-size: 22px;
-                text-align: center;
-                width: 100%;
-            }
-            
-            .player-header {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .music-select {
-                max-width: 100%;
-                width: 100%;
-            }
-            
-            .player-controls {
-                gap: 15px;
-            }
-            
-            .control-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 18px;
-            }
-            
-            .play-btn {
-                width: 60px;
-                height: 60px;
-                font-size: 22px;
-            }
-            
-            .modal-content {
-                padding: 25px 20px;
-                width: 95%;
-            }
-        }
-        
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .container {
-                max-width: 800px;
-            }
-            
-            .music-player, .phrases-container {
-                max-width: 650px;
-            }
-            
-            .avatar {
-                width: 170px;
-                height: 170px;
-            }
-            
-            .poem {
-                font-size: 20px;
-            }
-        }
-        
-        @media (min-width: 1200px) {
-            .container {
-                max-width: 1100px;
-            }
-            
-            .music-player, .phrases-container {
-                max-width: 850px;
-            }
-            
-            .avatar {
-                width: 200px;
-                height: 200px;
-            }
-            
-            .poem {
-                font-size: 24px;
-            }
-        }
-        
-        /* 动画效果 */
-        @keyframes fadeInItem {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .phrase-item {
-            animation: fadeInItem 0.5s ease forwards;
-        }
-        
-        .error-message {
-            color: #ff4444;
-            text-align: center;
-            padding: 10px;
-            margin-top: 10px;
-            font-size: 14px;
-            background-color: rgba(255, 68, 68, 0.1);
-            border-radius: 5px;
-            display: none;
-        }
-        
-        .error-message.show {
-            display: block;
-        }
-        
-        /* 加载动画 */
-        .loading {
-            display: inline-block;
             width: 20px;
             height: 20px;
-            border: 2px solid rgba(0, 0, 0, 0.1);
+            background: #16a34a;
+            color: #fff;
             border-radius: 50%;
-            border-top-color: #666666;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
+            font-size: 12px;
+            flex-shrink: 0;
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+
+        .empty-tip {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+            font-size: 15px;
+        }
+
+        .empty-tip .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .count-tip {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 10px;
+            padding-left: 4px;
+        }
+
+        mark {
+            background: #fef08a;
+            color: inherit;
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #result::-webkit-scrollbar {
+            width: 6px;
+        }
+        #result::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+        #result::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { padding: 20px 16px; border-radius: 12px; }
+            h2 { font-size: 20px; }
+            #search { font-size: 15px; padding: 12px 40px 12px 14px; }
+            #searchBtn { padding: 0 16px; font-size: 15px; }
+            .card { padding: 14px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 头像部分 -->
-        <div class="avatar-container">
-            <div class="avatar">
-                <img src="./小涵大王.jpg" alt="头像">
-            </div>
-            <div class="poem">泻水置平地，各自东西南北流</div>
+<div class="container">
+    <h2>🍟 薯条老师 🍟</h2>
+    <p class="subtitle">如有未更新的题目，请联系小涵更新!</p>
+
+    <div class="search-box">
+        <div class="input-wrap">
+            <input id="search" placeholder="输入题目关键词..." autocomplete="off">
+            <button class="clear-btn" id="clearBtn" aria-label="清空">✕</button>
         </div>
-        
-        <!-- 音乐播放器 -->
-        <div class="music-player">
-            <div class="player-header">
-                <h2 class="player-title">小涵大王</h2>
-                <select id="music-select" class="music-select">
-                    <option value="0">选择音乐...</option>
-                    <option value="1">Free炙热</option>
-                </select>
-            </div>
-            
-            <div class="now-playing" id="now-playing">未选择音乐</div>
-            <div id="error-message" class="error-message"></div>
-            
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar">
-                    <div class="progress" id="progress"></div>
-                </div>
-                <div class="time-info">
-                    <span id="current-time">0:00</span>
-                    <span id="total-time">0:00</span>
-                </div>
-            </div>
-            
-            <div class="player-controls">
-                <button class="control-btn" id="prev-btn">
-                    <i class="fas fa-step-backward"></i>
-                </button>
-                <button class="control-btn play-btn" id="play-btn">
-                    <i class="fas fa-play"></i>
-                </button>
-                <button class="control-btn" id="next-btn">
-                    <i class="fas fa-step-forward"></i>
-                </button>
-            </div>
-        </div>
-        
-        <!-- 短语容器 -->
-        <div class="phrases-container">
-            <h2 class="phrases-title">小涵大王</h2>
-            <div id="admin-indicator" class="admin-indicator" style="display: none;">
-                <i class="fas fa-user-shield"></i> 管理员模式 - 您可以管理短语
-            </div>
-            <ul class="phrases-list" id="phrases-list">
-                <!-- 短语将通过JavaScript动态添加 -->
-            </ul>
-            <div id="phrase-input-container" class="phrase-input-container" style="display: none;">
-                <input type="text" id="phrase-input" class="phrase-input" placeholder="请输入新的短语...">
-                <button id="add-phrase-btn" class="add-phrase-btn">
-                    <i class="fas fa-plus"></i> 添加短语
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 模式提示模态框 -->
-    <div id="mode-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-title">模式提示</h3>
-            <p id="modal-message">您当前的访问模式信息</p>
-            <button class="modal-btn" id="modal-close-btn">知道了</button>
-        </div>
+        <button id="searchBtn">搜索</button>
     </div>
 
-    <script>
-        // 音乐数据
-        const musicList = [
-            {
-                id: 1,
-                title: "Free炙热",
-                duration: "3:45",
-                // 替换为你的在线音频链接（推荐jsDelivr）
-                src: "https://m701.music.126.net/20251218061904/2d97050fc9a5ab6548b65845db1a2cbc/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/61962693485/2255/02c0/4e08/41fecf073baafa64efebbadc5e759d83.mp3?vuutv=Hq53nnxFNX8/gELszTUkSVJDfTGFEf9j8tMi4ChoayUcDDonXEa71cNqCayPCzF/9ofdpKixwXzQuKM7JSYG5JirnRF3pZGaghDwEGqzcD4IHQRUI43LZ7xrY5TafukA"
-            }
-        ];
-        
-        // 短语数据 - 使用localStorage存储
-        let phrases = [];
-        
-        // 检查URL参数，判断是否为管理员模式
-        const urlParams = new URLSearchParams(window.location.search);
-        const password = urlParams.get('password');
-        const isAdminMode = password === 'xiaoguan';
-        
-        // 初始化变量
-        let currentMusicIndex = 0;
-        let isPlaying = false;
-        const audio = new Audio();
-        let phraseIdCounter = 1;
-        
-        // DOM元素
-        const musicSelect = document.getElementById('music-select');
-        const playBtn = document.getElementById('play-btn');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const progressBar = document.getElementById('progress-bar');
-        const progress = document.getElementById('progress');
-        const currentTimeEl = document.getElementById('current-time');
-        const totalTimeEl = document.getElementById('total-time');
-        const nowPlayingEl = document.getElementById('now-playing');
-        const phrasesList = document.getElementById('phrases-list');
-        const errorMessage = document.getElementById('error-message');
-        const adminIndicator = document.getElementById('admin-indicator');
-        const phraseInputContainer = document.getElementById('phrase-input-container');
-        const phraseInput = document.getElementById('phrase-input');
-        const addPhraseBtn = document.getElementById('add-phrase-btn');
-        const modeModal = document.getElementById('mode-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalMessage = document.getElementById('modal-message');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-        
-        // 从localStorage加载短语数据
-        function loadPhrasesFromStorage() {
-            const savedPhrases = localStorage.getItem('phrases');
-            if (savedPhrases) {
-                phrases = JSON.parse(savedPhrases);
-                if (phrases.length > 0) {
-                    phraseIdCounter = Math.max(...phrases.map(p => p.id)) + 1;
+    <div id="result"></div>
+</div>
+
+<script>
+    // 完整题库
+    const questions = [
+        {"q":"武器升二星需要消耗多少把一星武器？","answer":"三把"},
+        {"q":"宝物【仁王笼手】的负面效果是？","answer":"受到的伤害提高"},
+        {"q":"每日可赠送好友的饭团数量最多为几个？","answer":"15个"},
+        {"q":"A难度每日悬赏，【最多】可以有多少忍者参加？","answer":"3名"},
+        {"q":"黄金宝箱可能获得什么级别的武器？","answer":"R级别及以上"},
+        {"q":"消耗雷锤可以获得1.2倍等级经验的武器是哪一把？","answer":"雷元剑"},
+        {"q":"炫彩小黑皮肤的围巾是什么颜色？","answer":"渐变色"},
+        {"q":"空之舞这个天赋属于哪位忍者？","answer":"琳"},
+        {"q":"在村夫阿力的皮肤中，他的裤子是什么颜色？","answer":"绿色"},
+        {"q":"游戏中厨艺最好的忍者是哪一位？","answer":"小椒"},
+        {"q":"小椒觉醒后的忍者形象名字叫什么？","answer":"神炎·小椒"},
+        {"q":"【生命值低于30%时，攻击力增加】是哪位忍者的天赋能力？","answer":"鬼狩·苍牙"},
+        {"q":"解锁阿力需要准备什么材料？","answer":"雷纹石"},
+        {"q":"背景设定中跑得最快的角色是谁？","answer":"小白"},
+        {"q":"琳的发型是什么？","answer":"姬发式"},
+        {"q":"阿力喜欢喝的饮品是什么？","answer":"上等好酒"},
+        {"q":"阿力最喜欢喝的是？","answer":"竹叶烧"},
+        {"q":"下列哪个角色是忍3里颜值最高的？","answer":"老板娘"},
+        {"q":"以下哪个是雪舞·琳的援护技？","answer":"葬龙舞"},
+        {"q":"下列武器不属于“和之国四大神弓”的是？","answer":"雷宿·麒麟"},
+        {"q":"集会所里那位抱着卷轴的可爱女孩叫什么名字？","answer":"小夜"},
+        {"q":"以下哪个宝物的套装效果是鬼狩·苍牙专属的？","answer":"天狗之牙"},
+        {"q":"如果要去沙漠旅行，最好选择以下哪位忍者陪你去？","answer":"琳"},
+        {"q":"在武士城的地牢深处，主角救下的人是谁？","answer":"沙克"},
+        {"q":"下面哪个忍者最擅长freestyle？","answer":"小黑"},
+        {"q":"关于竞技场饭团的获取途径，以下哪种说法是【错误】的？","answer":"打BOSS掉落"},
+        {"q":"和之国是谁建立的？","answer":"以上二人一起"},
+        {"q":"天气很热的时候，适合装备哪一个武器？","answer":"寒冰弓"},
+        {"q":"在武器回收商店，兑换一个SSR品质的武器需要多少根金骨头？","answer":"800根"},
+        {"q":"【织炎】的专属咒印【烈炎】是什么位置的咒印？","answer":"人咒印"},
+        {"q":"武器【扳手】的用处是？","answer":"提供武器技能经验"},
+        {"q":"小椒自带的厨具武器的名字是？","answer":"爆炎辣锅"},
+        {"q":"大个子武士手中的武器是？","answer":"大斧头"},
+        {"q":"小黑追击赤面鬼到森林深处，遭遇了什么？","answer":"武士的埋伏"},
+        {"q":"忍神使者所在的苦无禁地位于哪里？","answer":"恸哭之湖"},
+        {"q":"【紫焰】是以下哪个武器的幻化皮肤？","answer":"炎宿·朱雀"},
+        {"q":"武器升四星需要消耗多少把三星武器？","answer":"3把"},
+        {"q":"绫羽来自什么家族？","answer":"荆棘鸟家族"},
+        {"q":"忍村禁地中封印着什么？","answer":"千夜尸炎"},
+        {"q":"下列哪一个【不是】忍者的坐骑？","answer":"机械蜂"},
+        {"q":"兮兰小时候是谁的伴读？","answer":"伊鹤"},
+        {"q":"武器升五星需要消耗多少把四星武器？","answer":"4把"},
+        {"q":"【复活人偶】的作用是什么？","answer":"复活初始者"},
+        {"q":"关于竞技场奖杯，以下哪种说法是【错误】的?","answer":"奖杯可以兑换道具"},
+        {"q":"竞技币不能通过以下哪种途径获得？","answer":"在忍村试炼中获得"},
+        {"q":"以下3V3卡牌中哪个卡牌是被动卡牌？","answer":"【克隆】"},
+        {"q":"绫羽生前和苍牙一个小队时，她担任队中的什么职位？","answer":"副队长"},
+        {"q":"封印阴剑的忍村禁地的守护者是谁？","answer":"守护剑魂"},
+        {"q":"想要获得【诡兵尽藏】这一特殊忍阶要怎么办？","answer":"去收集更多幻化武器"},
+        {"q":"忍者在水面上奔跑的忍术，又被称为？","answer":"忍法·水上漂"},
+        {"q":"竞技币的发放时间是每天的什么时候呢？","answer":"21点"},
+        {"q":"竞技场中，通灵宝珠的作用是什么？","answer":"召唤通灵兽作战"},
+        {"q":"每个玩家的初始好友上限是多少个？","answer":"100人"},
+        {"q":"战斗卡牌【武器秘籍】能随机获得一个什么级别的武器技能？","answer":"SSR"},
+        {"q":"赤面鬼是由什么人召唤出来的？","answer":"阴阳师"},
+        {"q":"伊鹤目前有几个忍者流派？","answer":"2个"},
+        {"q":"主角们第一次被沙克击败是在哪里？","answer":"月之湖"},
+        {"q":"想要召唤灾祸难度的家族首领，家族等级需要达到几级？","answer":"5级"},
+        {"q":"如何获得【忍者之路】这一系列的成就？","answer":"通过通关故事剧情关卡"},
+        {"q":"宝物【超星太鼓】的效果是？","answer":"提高攻击力"},
+        {"q":"竞技场每个分组上限有多少人？","answer":"50"},
+        {"q":"通灵兽·雷龙如何获得？","answer":"使用7颗S级雷龙珠解锁"},
+        {"q":"以下哪一项【不是】购买神龙契约后的福利？","answer":"竞技场得分加成！"},
+        {"q":"提升忍者援护技的参悟秘籍不能通过以下哪种途径获得？","answer":"升级忍者等级"},
+        {"q":"小椒觉醒雷电之力后的忍者形象是？","answer":"星闪·小椒"},
+        {"q":"忍3官服的账号在安卓和苹果端数据互通吗？","answer":"互通"},
+        {"q":"剧情关卡中，垂死挣扎的青面鬼，做了什么举动?","answer":"释放毒气"},
+        {"q":"小黑的第一把武器是什么？","answer":"忍刀"},
+        {"q":"下面哪一个天赋是绯斩·苍牙的？","answer":"绯夜"},
+        {"q":"3V3决斗场中，初始需要多少战斗积分可以开启一个战斗卡包？","answer":"100分"},
+        {"q":"【寒星·追】是雪舞·琳的＿＿？","answer":"命格"},
+        {"q":"战斗卡牌【复制】有什么作用？","answer":"从敌方装备卡牌中复制一张"},
+        {"q":"参加跳远比赛，应该选择什么装备？","answer":"【炎宿朱雀】"},
+        {"q":"隼白使用的阴剑奥义叫什么名字？","answer":"暗灭天杀"},
+        {"q":"宝物【再生激素】的效果是？","answer":"提高生命恢复速度"},
+        {"q":"家族最高可以升到多少级？","answer":"10级"},
+        {"q":"【神使·沧溟】技能所召唤的最后一条鱼是什么鱼？","answer":"鲨鱼"},
+        {"q":"千夜尸炎最终落到了谁的手中？","answer":"隼白"},
+        {"q":"下列哪一个【不是】赤面鬼的爱好？","answer":"烫头"},
+        {"q":"武器【上上签】的技能效果是？","answer":"随机释放一个武器的技能"},
+        {"q":"【深海·苍牙】皮肤中，苍牙的肩膀上有一只什么动物？","answer":"章鱼"},
+        {"q":"下面几个3V3段位，哪个等级最高？","answer":"无双"},
+        {"q":"剧情中，阴阳师掳走了隼白，并且召唤了什么怪物？","answer":"青面鬼和赤面鬼"},
+        {"q":"武器【漩雷一文字】是什么品质的武器？","answer":"SSR"},
+        {"q":"青面鬼和赤面鬼是什么关系？","answer":"夫妻"},
+        {"q":"卡牌【血之契】的作用是什么？","answer":"血量越少攻击越高"},
+        {"q":"下列哪一个武器其实【不是】真正意义上的武器？","answer":"尚方宝剑"},
+        {"q":"下面哪个是熊猫人设置的陷阱？","answer":"飞行炸弹"},
+        {"q":"下面哪一个宝物会提供最强的防御？","answer":"不动明王甲"},
+        {"q":"多人战斗中的聊天表情最多装备几个？","answer":"4个"},
+        {"q":"S难度召令悬赏，【最少】需要有多少忍者参加？","answer":"3"},
+        {"q":"入侵竹叶寨的武士三兄弟中最先死的是谁？","answer":"武士三弟"},
+        {"q":"小黑是什么星座？","answer":"射手座"},
+        {"q":"下面谁【没有】尾巴？","answer":"小黑"},
+        {"q":"以下哪个BOSS的体重最大？","answer":"黑龙"},
+        {"q":"以下哪个BOSS体积最大？","answer":"巨型机械傀儡"},
+        {"q":"通灵兽每日获得通用技能点【上限】如何增加？","answer":"解锁新的通灵兽"},
+        {"q":"3V3中对战时，应该注意哪些开麦礼仪？","answer":"使用耳机避免杂音"},
+        {"q":"宝物【姬·达摩】能提高对什么系的敌人的伤害？","answer":"人类"},
+        {"q":"SSR武器【雷鸣剑】曾经是谁的神器？","answer":"忍神"},
+        {"q":"雷神派谁帮助忍者与熊猫人联军保卫竹叶寨？","answer":"雷龙"},
+        {"q":"青面鬼怎么称呼自己呢？","answer":"老娘"},
+        {"q":"3v3决斗场中，直接购买一个卡包需要花费多少勾玉？","answer":"80勾玉"},
+        {"q":"忍者铁甲是小黑的？","answer":"教官"},
+        {"q":"关于竞技场疾风模式，以下哪种说法是【错误】的？","answer":"消耗饭团都翻倍"},
+        {"q":"下面哪一个忍者可以完美融入黑色背景？","answer":"小黑"},
+        {"q":"头像【百花齐放】怎么获得？","answer":"集齐12个月度礼包头像获得"},
+        {"q":"关于家族BOSS，以下哪种说法是正确的？","answer":"家族BOSS【每周】更换一次"},
+        {"q":"这三个人谁最会泡咖啡？","answer":"琳"},
+        {"q":"关于家族商店，以下哪种说法是【错误】的？","answer":"只对精英以上族员开放"},
+        {"q":"在幻境中，仙人爷爷交给阿力的墨镜有什么特殊功能？","answer":"透视、显隐"},
+        {"q":"多人战场中，卡牌【强力】的效果是？","answer":"提高自身的攻击力"},
+        {"q":"召唤困难难度的家族首领需要达成什么必要条件？","answer":"全族累计击败12个家族首领"},
+        {"q":"竞技场没有以下哪种模式？","answer":"狂暴模式"},
+        {"q":"战斗卡牌【强壮】的效果是什么？","answer":"增加生命值上限"},
+        {"q":"在琳即将成为巫女之前，跑去山顶看姐姐的时候带了什么礼物去？","answer":"蓝雪花"},
+        {"q":"忍者小屋中忍者的每日修炼需要多少时间？","answer":"23小时"},
+        {"q":"武器【黄金圣剑】的外观形状是什么？","answer":"咸鱼"},
+        {"q":"竞技场猫猫抽奖一次，需要多少竞技币？","answer":"200"},
+        {"q":"谁创造了苦无禁地？","answer":"忍者之神"},
+        {"q":"【雪舞·琳】的头发是什么颜色的？","answer":"白色"},
+        {"q":"通灵兽技能【冰锥喷射】属于下列哪只通灵兽？","answer":"云狐"},
+        {"q":"小黑的第一个获得的坐骑是？","answer":"黑龙"},
+        {"q":"神秘商店接收以下哪种货币？","answer":"忍币"},
+        {"q":"【千夜尸炎】被封印在哪里？","answer":"忍村禁地"},
+        {"q":"通灵兽技能【云狐之力】的效果是？","answer":"为忍者提供三个助战冰锥"},
+        {"q":"以下哪个不是阿力外传中出现的关卡？","answer":"忍拳"},
+        {"q":"当主角赶到忍村禁地，此时阴剑已经？","answer":"不见了"},
+        {"q":"什么品质的武器能装备咒印？","answer":"SSR"},
+        {"q":"通灵兽每天最多可以巡逻几次？","answer":"不限次数"},
+        {"q":"这一代【武士大名】是和之国第几代统治者？","answer":"第十七代"},
+        {"q":"武器咒印的等级最高是几级？","answer":"6级"},
+        {"q":"小椒的外传关卡中，小椒到山上是为了收集？","answer":"松茸"},
+        {"q":"以下哪个【不是】家徽的获取途径？","answer":"家族币兑换"},
+        {"q":"雪舞·琳的皮肤【青尾之海】穿着什么颜色的裙子？","answer":"青色和白色"},
+        {"q":"下面悬赏令的说法，哪一个是【错误】的？","answer":"失败之后悬赏令会消失"},
+        {"q":"有三个忍者去参加跳高，谁能获胜？","answer":"鬼狩·苍牙"},
+        {"q":"最早是谁创建了忍者村？","answer":"忍者之神"},
+        {"q":"参加周末活动，可以获得以下哪种奖励？","answer":"任务币"},
+        {"q":"忍者觉醒需要消耗什么材料？","answer":"觉醒石"},
+        {"q":"当遇到骗子在聊天频道发布广告的时候，应该怎么做？","answer":"善用举报功能"},
+        {"q":"宝物【雷之戒】可以和下列哪一个宝物组成套装？","answer":"雷之手里剑"},
+        {"q":"关于忍者在地面俯冲，以下哪种说法是【错误】的？","answer":"可以瞬间无敌！"},
+        {"q":"【忍者小队】功能中，一个小队最多上阵几个忍者？","answer":"4个"},
+        {"q":"家族深渊每周刷新几个备战副本可供挑战？","answer":"3个"},
+        {"q":"R品质的武器最高可以升到几星？","answer":"3星"},
+        {"q":"卡牌【背水一战】的增益效果是什么？","answer":"提升武器伤害"},
+        {"q":"阿力的生日是什么时候？","answer":"7月12日"},
+        {"q":"3V3决斗场排位赛周末开放时间段是多少？","answer":"11:00-20:00"},
+        {"q":"战斗卡牌【禁忌卷轴】有什么正面效果？","answer":"召唤一个元素精灵"},
+        {"q":"绯斩·苍牙脸上的面具来自于谁？","answer":"绫羽"},
+        {"q":"以下哪个属于宝物【雷龙之鞘】的效果？","answer":"缩短武器技能冷却时间"},
+        {"q":"通灵兽技能【黑龙祝福】的效果是？","answer":"提高所有忍者得分加成"},
+        {"q":"在战令中集齐全部每日试炼奖励，最少需要获取多少试炼点数？","answer":"50"},
+        {"q":"沙克是什么种族的？","answer":"海族"},
+        {"q":"忍者小屋目前最多开放多少层呢？","answer":"4"},
+        {"q":"以下哪个宝物的套装效果是神乐·琳专属的？","answer":"苍之神铃"},
+        {"q":"战斗卡牌【魁首】在什么情况下能触发？","answer":"率先到达金鱼币商店"},
+        {"q":"3V3战场效果【优惠】的效果是？","answer":"战斗卡牌价格降低"},
+        {"q":"盛桂又被人们称为什么？","answer":"食神"},
+        {"q":"下面哪个忍者，穿过帅气的牛仔服？","answer":"阿力"},
+        {"q":"机械蜂的哪种弹幕攻击会被反弹？","answer":"蓝色激光"},
+        {"q":"在伊鹤打败优子后，残心正准备带着优子离开，谁拦住了他？","answer":"沙克"},
+        {"q":"绯斩·苍牙的大招分为几式？","answer":"3式"},
+        {"q":"从金钥宝库中可能获得什么等级的武器？","answer":"R级别及以上"},
+        {"q":"达成什么忍阶后，可以申请加入家族？","answer":"中忍"},
+        {"q":"以下道具哪一种【不能】从竞技场备战商店中购买？","answer":"火元素球"},
+        {"q":"下面哪一个【不是】忍者的武器？","answer":"大斧头"},
+        {"q":"在多少年前，鬼族打开了罗生之门，入侵了这片大地？","answer":"300年前"},
+        {"q":"2400竞技币可以在猫猫抽奖里抽多少次？","answer":"12次"},
+        {"q":"在琳即将成为巫女之前，姐姐送了什么礼物给她？","answer":"祝神铃"},
+        {"q":"家族商店，【不能】买到什么？","answer":"超能扳手"},
+        {"q":"为了追寻自己的身世，小椒决定？","answer":"加入忍者部队"},
+        {"q":"忍阶【影忍】最高的星级是多少？","answer":"5星"},
+        {"q":"以下哪位忍者的身高最高？","answer":"苍牙"},
+        {"q":"食神救走小椒的路上，遇到了谁的阻拦？","answer":"年轻时的血影"},
+        {"q":"以下哪一项【不是】获得宝物的途径？","answer":"家族祈福"},
+        {"q":"以下三个竞技场组别，哪一个最高级？","answer":"钻石组"},
+        {"q":"忍者考试的最终试练是什么？","answer":"驯服一条黑龙"},
+        {"q":"战斗卡牌【群体重力场】有什么效果？","answer":"使敌方无法三段跳或漂浮"},
+        {"q":"合成一个S级宝物需要多少个A级宝物？","answer":"5个"},
+        {"q":"下面哪一个天赋是炎魂·小黑的？","answer":"火之刃"},
+        {"q":"每周会刷新几组竞技场每周任务？","answer":"3组"},
+        {"q":"阿力的忍术叫什么名字？","answer":"烈雷暴丸"},
+        {"q":"以下哪首音乐不是忍3官方的原创音乐？","answer":"冬之花"},
+        {"q":"更改玩家地理位置后，怎样才能再次修改？","answer":"等待1天"},
+        {"q":"以下哪个天赋能力是属于鬼狩·苍牙的？","answer":"踏风"},
+        {"q":"宝物【鬼眼魔戒】的负面效果是？","answer":"降低生命值恢复速度"},
+        {"q":"工坊挑战开启期间，工坊商店会在哪一天刷新？","answer":"每周四5：00"},
+        {"q":"兮兰是怎样称呼伊鹤的？","answer":"殿下"},
+        {"q":"下面哪一个是黑龙的技能？","answer":"炎弹喷射"},
+        {"q":"悬赏令商店的老板是谁？","answer":"刺猬【扎扎】"},
+        {"q":"一把SSR武器最多装备几个咒印？","answer":"3个"},
+        {"q":"金钥匙有什么用？","answer":"在金钥宝库召唤武器"},
+        {"q":"【黑风】是谁的坐骑？","answer":"隼白"},
+        {"q":"下列哪个怪物的眼睛最小？","answer":"小武士"},
+        {"q":"下面的哪个3V3段位最高？","answer":"修罗"},
+        {"q":"“雷霆的呼唤”外传中，带着斗笠的“旅行者”的真实身份是？","answer":"猩红小椒"},
+        {"q":"小黑在苦无禁地中的幻境见到的【白·小黑】是由什么变成的？","answer":"小黑的围巾"},
+        {"q":"主角从什么怪物手中救下了小白？","answer":"大蝙蝠"},
+        {"q":"“雷霆的呼唤”外传中，小椒第一次见到“旅行者”是在哪里？","answer":"辣椒田"},
+        {"q":"蓝雪花的花语是什么？","answer":"勇敢和率真"},
+        {"q":"绯斩·苍牙主手装备以下哪一把武器可以增加攻击力？","answer":"亡魂之音"},
+        {"q":"竞技场白银组及以下的奖杯的结算日是？","answer":"周三和周六"},
+        {"q":"下列哪一个武器【不是水系】武器？","answer":"三日月雷切"},
+        {"q":"【雷之庇佑】是哪只通灵兽的技能？","answer":"雷龙"},
+        {"q":"多人竞速的胜利标准是？","answer":"跑的最快的忍者"},
+        {"q":"前往暗之森林的忍者精英部队由谁带领？","answer":"隼白"},
+        {"q":"同样的卡牌等级下，以下哪个卡牌需要最多的金鱼币？","answer":"四象封印"},
+        {"q":"以下哪一个忍阶的等级最高？","answer":"幻忍"},
+        {"q":"云狐的养成过程具体能分为几个阶段？","answer":"3个阶段"},
+        {"q":"主角第二次遇到血影时，他说了什么？","answer":"今天看你往哪里跑！"},
+        {"q":"隼白和其追随者在哪里集结，正式向武士宣战？","answer":"忍神山"},
+        {"q":"小白击败巨型机械傀儡的必杀技叫什么名字？","answer":"雷电必杀波"},
+        {"q":"被伊鹤追赶的武士头目通过什么工具逃跑了？","answer":"机械蜂"},
+        {"q":"以下忍者谁是熊猫人？","answer":"阿力"},
+        {"q":"3V3竞技场里的一个卡包可以开出多少枚卡牌？","answer":"5"},
+        {"q":"【龙血围巾】可以和哪个宝物组成套装？","answer":"龙骨号角"},
+        {"q":"以下哪种食物【不能】喂食通灵兽？","answer":"小武士"},
+        {"q":"武器【大锤】的用途是？","answer":"提供大量的【武器经验】"},
+        {"q":"3V3决斗场中一位忍者最多可以装备几张卡牌？","answer":"5张"},
+        {"q":"下面哪一个忍阶的等级最高？","answer":"影忍"},
+        {"q":"主角到忍村禁地，那里等待着的是？","answer":"机关和陷阱"},
+        {"q":"想要降低来自BOSS的伤害，应该选择哪个宝物？","answer":"足轻甲"},
+        {"q":"在荒村中和伊鹤交战的“小姑娘”真名是什么？","answer":"优子"},
+        {"q":"参与家族深渊备战副本不能获得什么？","answer":"家族红包"},
+        {"q":"云狐属于哪个势力？","answer":"玉狐一族"},
+        {"q":"3V3商店【不能】买到什么？","answer":"宝物合成图卷"},
+        {"q":"以下哪个忍术是属于雷兽·阿力的？","answer":"烈雷暴丸"},
+        {"q":"以下哪个忍术是属于神乐·琳的？","answer":"冰天雪葬"},
+        {"q":"在苦无禁地中最后一个进入幻境试炼的是谁？","answer":"小椒"},
+        {"q":"在外观商店的皮肤夺宝中，抽取一次奖励需要多少外观券？","answer":"15张"},
+        {"q":"忍界之前流行的【爱疯XXX】是什么属性的武器呢？","answer":"雷属性"},
+        {"q":"通灵兽·天鹰如何获得？","answer":"集齐30个天鹰之羽后解锁"},
+        {"q":"灾祸难度的家族首领的组队人数限制是多少？","answer":"需要5人"},
+        {"q":"下列哪一个武器【不是火系】武器？","answer":"雷狱光剑"},
+        {"q":"每日几点结算竞技场中的排名奖励？","answer":"晚上9点"},
+        {"q":"S级宝物图卷【不能】用来做什么？","answer":"合成SS级图卷"},
+        {"q":"阿力的头上戴的是什么？","answer":"斗笠"},
+        {"q":"武器回收商店中用来兑换商品的金骨头如何获得？","answer":"分解多余的武器获得"},
+        {"q":"购买月卡·神龙契约后，每日登录可以领取多少勾玉？","answer":"30勾玉"},
+        {"q":"忍者角色需要达到多少级才可以觉醒？","answer":"70级"},
+        {"q":"以下通灵兽里，目前还没有装饰皮肤的是？","answer":"雷龙"},
+        {"q":"琳的生日是几月几号？","answer":"9月9日"},
+        {"q":"分解D级宝物宝物“盗版钱包”会得到多少忍币？","answer":"200"},
+        {"q":"外观券的作用是什么？","answer":"兑换忍者皮肤"},
+        {"q":"在不消耗资源的情况下，忍者小队的搭配方案最初能创建多少个？","answer":"10个"},
+        {"q":"大名府深处，阴阳师召唤了什么怪物来阻止主角？","answer":"火焰式神"},
+        {"q":"【龙神飨宴】这把武器更适合谁？","answer":"正在健身的阿力"},
+        {"q":"以下关于购买【忍界契约】终身卡的描述，错误的是？","answer":"可以增加50个好友上限"},
+        {"q":"以下哪个增益不包含在竞技场的随机祝福中？","answer":"宝箱掉率加成"},
+        {"q":"谁从血影手中救走了主角？","answer":"隼白"},
+        {"q":"小黑的衣柜里【没有】什么颜色的围巾？","answer":"绿色"},
+        {"q":"这三个忍者去参加跳远比赛，谁能获胜？","answer":"神乐·琳"},
+        {"q":"关于竞技场，以下哪种说法是【错误】的？","answer":"参加竞技场【没有】消耗"},
+        {"q":"下面三人谁跑的最快？","answer":"逃跑中的小白"},
+        {"q":"替身卷轴有什么作用呢？","answer":"抵挡一次致命伤害"},
+        {"q":"苍牙在暗之森林独自执行任务时，遇到了哪个BOSS？","answer":"武士队长"},
+        {"q":"参加周末活动获得的“任务勋章”可以用来？","answer":"在【活动商店】兑换奖励"},
+        {"q":"参加周末活动获得的“任务币”可以用来？","answer":"在【活动商店】兑换奖励"},
+        {"q":"苍牙曾经在哪里修行呢？","answer":"云之国"},
+        {"q":"主角与小白在墓地遭遇的御庭三剑客之一是谁？","answer":"血影"},
+        {"q":"战斗卡牌【力量代价】的负面效果是什么？","answer":"失去下翻能力一段时间"},
+        {"q":"【不存在】下列哪一个属性的武器？","answer":"光属性"},
+        {"q":"答题还是很辛苦的呢，这道题就送给你啦","answer":"正确答案，请选我"},
+        {"q":"更改玩家性别后，需要多久才能再次更改？","answer":"3天之后"},
+        {"q":"宝物【忍术作弊小抄】的效果是？","answer":"出场忍术能量提高"},
+        {"q":"【朔雪琼冠】是哪位忍者的专属宝物？","answer":"雪舞·琳"},
+        {"q":"关于1V1切磋，哪一种说法是【正确】的？","answer":"任何时间都会开启"},
+        {"q":"想要获得【幻术使】这一特殊忍阶该怎么办？","answer":"去努力收集皮肤特效！"},
+        {"q":"武器升三星需要消耗多少把二星武器？","answer":"2把"},
+        {"q":"以下哪个皮肤可以直接在外观商店购买？","answer":"乘风破浪"},
+        {"q":"【鬼·苍牙】皮肤的苍牙脸上带的是谁的面具？","answer":"死去的同组好友的面具"},
+        {"q":"关于竞技场高级饭团兑换功能，以下哪种说法是【错误】的？","answer":"可以获得攻击力加成！"},
+        {"q":"如何驱散骨爪林的黑暗？","answer":"使用忍灯"},
+        {"q":"卡牌【勇气战鼓】提供的增益时间是多久？","answer":"20秒"},
+        {"q":"什么评级以上的武器可以升级武器技能？","answer":"SR以上"},
+        {"q":"3V3中最多可以保存多少种【战斗卡牌方案】？","answer":"5种"},
+        {"q":"竞技场【不提供】什么食物兑换？","answer":"河豚饭团"},
+        {"q":"竞技场饭团兑换功能在什么时候开放？","answer":"中忍三星"},
+        {"q":"以下哪个忍术是属于炎魂·小黑的？","answer":"火龙炎弹"},
+        {"q":"【桃姬·琳】皮肤中，琳的衣服是什么颜色的？","answer":"粉色"},
+        {"q":"家族深渊冒险备战副本每天可以挑战几次？","answer":"无限"},
+        {"q":"女仆打扮的琳很可爱呢，那么她头上戴着是什么动物的耳朵呢？","answer":"兔兔耳朵"},
+        {"q":"忍者精英部队在暗之森林遭到了什么部队的埋伏？","answer":"武士"},
+        {"q":"3V3卡牌商店中，猫老板的渔船的原型是什么？","answer":"鲷鱼烧"},
+        {"q":"忍村遭到袭击后，忍者们撤退到了哪儿？","answer":"竹叶寨"},
+        {"q":"阿力在离开幻境前，最后是什么东西飞回了他的手里？","answer":"纸飞机"},
+        {"q":"【织炎】是什么属性的武器？","answer":"火属性"},
+        {"q":"伊鹤奉隼白之命从忍神山赶往哪里去支援沙克？","answer":"荒川"},
+        {"q":"完成3V3每日任务，可以获得什么奖励？","answer":"彩虹鱼币"},
+        {"q":"套装【火遁套装】的效果是？","answer":"造成火系伤害提高"},
+        {"q":"当没有忍阶任务的时候，应该怎么办？","answer":"先歇一歇，明天任务会刷新"},
+        {"q":"以下怪物中哪种【不是】阴阳师的式神？","answer":"大蝙蝠"},
+        {"q":"以下哪个宝物的套装效果是炎魂·小黑专属的？","answer":"龙血围巾"},
+        {"q":"神炎·小椒的忍术名叫做？","answer":"百烈凤炎"},
+        {"q":"家族等级达到多少级可以报名参加家族战？","answer":"2级"},
+        {"q":"下面关于剧情模式，哪一个说法是【错误】的？","answer":"需要消耗饭团"},
+        {"q":"小黑的爱疯手机没电了，他应该去找谁帮忙？","answer":"阿力"},
+        {"q":"下面哪一个宝物增加的生命值最多？","answer":"五彩兵粮丸"},
+        {"q":"【宝物残卷】可以用来？","answer":"在【图卷商店】兑换图卷"},
+        {"q":"击败悬赏令BOSS【不能】获得？","answer":"属性石"},
+        {"q":"一位忍者最多可以装备几个宝物？","answer":"5个"},
+        {"q":"玉狐一族的诅咒之源目前由谁“封印”？","answer":"琳的姐姐琼"},
+        {"q":"重复的3V3卡牌可以用来？","answer":"卡牌升级"},
+        {"q":"下面哪个型号的机械蜂最厉害？","answer":"99号"},
+        {"q":"隼白又被人称之为？","answer":"白夜叉"},
+        {"q":"以下哪个宝物的套装效果是雷兽·阿力专属的？","answer":"超级充电宝"},
+        {"q":"关于家族战，哪一个说法是【错误】的？","answer":"失败方没有任何奖励"},
+        {"q":"以下对于支援忍者的描述正确的是？","answer":"可以编入忍者小队提供增益"},
+        {"q":"猩红小椒被打败后，她的下场是什么？","answer":"和小椒融为一体"},
+        {"q":"下列哪一个武器【不是风系】武器？","answer":"尚方宝剑"},
+        {"q":"以下哪种行为，【不能】增加好友度？","answer":"和好友聊天"},
+        {"q":"以下哪个忍术是属于鬼狩·苍牙的？","answer":"魔风鬼轮"},
+        {"q":"以下哪个天赋能力是属于神乐·琳的？","answer":"空之舞"},
+        {"q":"以下哪一项【不是】家族等级提升后的好处？","answer":"家族祈福全免费"},
+        {"q":"角色【琳】所属的种族是？","answer":"玉狐一族"},
+        {"q":"下面哪位人物在游戏中穿过宇航服？","answer":"小黑"},
+        {"q":"如何获得神龙之血","answer":"参加各等级悬赏令"},
+        {"q":"在哪里可以锻炼忍者技巧？","answer":"训练所"},
+        {"q":"李康和阿力是什么关系？","answer":"师徒"},
+        {"q":"在通往竹叶寨的秘密山洞中，主角发现的巨型机械傀儡产自哪里？","answer":"南蛮国"},
+        {"q":"幻境中，阿力遇到的拍摄《A计划》-《N计划》的女影星叫什么？","answer":"罗拉"},
+        {"q":"恶达摩可以和下列哪个宝物组成套装？","answer":"善·达摩"},
+        {"q":"以下哪个宝物是绯斩·苍牙的专属宝物？","answer":"本无业镜"},
+        {"q":"以下哪条不是苍牙在幻境中前去拯救绫羽经过的路？","answer":"绝崖"},
+        {"q":"参加考试的途中，小黑弄坏了什么？","answer":"佛头雕像"},
+        {"q":"下面哪一个宝物是【不存在】的？","answer":"剑豪的传说中"},
+        {"q":"伊鹤从忍神山出发，前往荒川的路途中乘坐着什么？","answer":"纸鹤"},
+        {"q":"宝物【精钢笼手】的效果是？","answer":"降低受到小怪和BOSS的伤害"},
+        {"q":"下面哪一个武器可以通过蓄力提升威力？","answer":"祝融"},
+        {"q":"以下哪一把武器消耗风锤可以获得1.2倍的等级经验？","answer":"风妖镰鼬"},
+        {"q":"道具【青焰灯】有什么作用？","answer":"兑换皮肤夺宝商店的皮肤"},
+        {"q":"宝物【凌霄飞爪】可以和下面哪一个宝物组成【天狗套装】？","answer":"天狗之牙"},
+        {"q":"空中如何最快降到绳子上方？","answer":"下翻落地之前马上按跳跃"},
+        {"q":"琳的姐姐叫什么名字？","answer":"琼"},
+        {"q":"忍者小夜的头发是什么颜色？","answer":"白色"},
+        {"q":"哪个忍者曾被幽灵附身过？","answer":"琳"},
+        {"q":"下列哪一个武器【不是雷系】武器？","answer":"祝融"},
+        {"q":"下面哪一个天赋是雷兽·阿力的？","answer":"雷之庇护"},
+        {"q":"卡牌【破釜沉舟】的增益效果是什么？","answer":"提升忍术伤害"},
+        {"q":"道具【紫金钥匙】和【金钥匙】的区别在哪里？","answer":"必定获得SR及以上的武器"},
+        {"q":"通灵兽技能【天鹰赐福】的效果是？","answer":"提高所有忍者生命值"},
+        {"q":"【御灵符】有什么作用？","answer":"可以用于咒印炼化"},
+        {"q":"在一场战斗中，忍者最多可以切换几次流派？","answer":"3次"},
+        {"q":"地面上如何获得最快的移动速度？","answer":"冲刺后跳跃"},
+        {"q":"哪位忍者将御火芭蕉扇作为主武器时可以增加攻击力？","answer":"龙焰·小黑"},
+        {"q":"如何强化武器等级？","answer":"消耗锤子或者其他武器强化"},
+        {"q":"在小椒被猩红小椒打倒后，是谁救了她，背她跑回竹叶寨？","answer":"小白"},
+        {"q":"通灵兽在下列什么情况下【不能】被召唤出来？","answer":"剧情关卡中死亡接力"},
+        {"q":"哪些地方【不能】看到其他玩家的游戏【直播】？","answer":"竞技场"},
+        {"q":"家族BOSS有几个难度？","answer":"6个"},
+        {"q":"以下哪个天赋能力是属于炎魂·小黑的？","answer":"替身大师"},
+        {"q":"哪些地方【不能】看到好友录像？","answer":"武器图鉴"},
+        {"q":"【迷蝶】是下列哪个武器的幻化？","answer":"冰岚折扇"},
+        {"q":"下面哪一种忍阶任务，如果不及时完成，第二天会消失？","answer":"每日任务"},
+        {"q":"家族战阵容，应该如何决定？","answer":"和族员一起商量"},
+        {"q":"饭团自然回复的上限是多少？","answer":"30个"},
+        {"q":"面对大武士的时候应该怎么做才能击杀它？","answer":"躲开攻击后接触击杀"},
+        {"q":"苍牙为何带着面具？","answer":"为了纪念死去的战友"},
+        {"q":"以下哪个不是卡牌【百宝瓶】的效果？","answer":"增加攻击力"},
+        {"q":"下面哪一个不是神龙契约的奖励？","answer":"忍者攻击力提高"},
+        {"q":"炎魂·小黑如何才能获得三段跳的能力？","answer":"装备【黑龙套装】"},
+        {"q":"【经验点】可以用来？","answer":"提升忍者的等级"},
+        {"q":"合成一个A级宝物，需要多少B级宝物？","answer":"4个"},
+        {"q":"竞技场中，刷新一次【随机祝福】，需要多少忍币？","answer":"300"},
+        {"q":"阴阳师的笑声是什么样的？","answer":"哼哼哼哼哼哼哼~"},
+        {"q":"【雷狱光剑】的武器技能一次能放出几道闪电？","answer":"3道"},
+        {"q":"目前忍者的等级上限是多少？","answer":"120级"},
+        {"q":"初次见到血影的时候，血影说了什么？","answer":"该来的人没来"},
+        {"q":"武器回收商店的狗狗老板最喜欢吃什么？","answer":"骨头"},
+        {"q":"机械蜂故障时会发出什么声音？","answer":"哔，哔哔，哔哔哔哔！"},
+        {"q":"小白头上的叶子是什么叶？","answer":"荷叶"},
+        {"q":"谁从阴阳师手中救走了主角？","answer":"隼白"},
+        {"q":"忍村派出的精英部队前往哪儿剿灭鬼族？","answer":"暗之森林"},
+        {"q":"苍牙曾在山洞中找到什么东西，后赠送给绫羽作为礼物？","answer":"本无业镜"},
+        {"q":"【黑式神】是被谁召唤的？","answer":"阴阳师"},
+        {"q":"以下哪个是伊鹤使用的忍术？","answer":"影流·千鹤舞"},
+        {"q":"以下哪一把武器消耗火锤可以获得1.2倍的等级经验？","answer":"御火芭蕉扇"},
+        {"q":"以下哪一把武器消耗水锤可以获得1.2倍的等级经验？","answer":"寒冰弓"},
+        {"q":"下面三个人同时掉水里了，应该先救谁？","answer":"老板娘"}
+    ];
+
+    const input = document.getElementById("search");
+    const result = document.getElementById("result");
+    const clearBtn = document.getElementById("clearBtn");
+    const searchBtn = document.getElementById("searchBtn");
+
+    // 初始化 Fuse（如果加载成功）
+    let fuse = null;
+    if (typeof Fuse !== 'undefined') {
+        fuse = new Fuse(questions, {
+            keys: ["q"],
+            threshold: 0.4,
+            ignoreLocation: true,
+            includeScore: true,
+            minMatchCharLength: 2,
+        });
+    }
+
+    // 降级搜索：Fuse 不可用时，用简单的包含匹配
+    function simpleSearch(keyword) {
+        const kw = keyword.toLowerCase();
+        const results = [];
+        for (const item of questions) {
+            const q = item.q.toLowerCase();
+            if (q.includes(kw)) {
+                // 完全包含，排前面
+                results.push({ item, score: 0 });
+            } else {
+                // 逐字匹配：统计关键词中有多少字出现在题目里
+                let hit = 0;
+                for (const ch of kw) {
+                    if (q.includes(ch)) hit++;
                 }
-            } else {
-                // 默认短语
-                phrases = [
-                    {
-                        id: 1,
-                        text: "欢迎来到小涵大王的音乐世界",
-                        pinned: false,
-                        visibility: 'public',
-                        order: 1
-                    }
-                ];
-                savePhrasesToStorage();
-            }
-        }
-        
-        // 保存短语数据到localStorage
-        function savePhrasesToStorage() {
-            localStorage.setItem('phrases', JSON.stringify(phrases));
-        }
-        
-        // 显示错误信息
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('show');
-            setTimeout(() => {
-                errorMessage.classList.remove('show');
-            }, 3000);
-        }
-        
-        // 显示模式提示
-        function showModeAlert() {
-            if (isAdminMode) {
-                modalTitle.textContent = '管理员模式';
-                modalMessage.innerHTML = '<i class="fas fa-user-shield" style="color:#ff9900;margin-right:8px;"></i>您现在是管理员模式哦！<br><small>您可以添加、编辑和删除短语</small>';
-            } else {
-                modalTitle.textContent = '访客模式';
-                modalMessage.innerHTML = '<i class="fas fa-user" style="color:#666;margin-right:8px;"></i>您现在是访客身份哦！<br><small>您只能查看公开的短语</small>';
-            }
-            modeModal.style.display = 'flex';
-            sessionStorage.setItem('modeAlertShown', 'true');
-        }
-        
-        // 初始化短语列表
-        function initPhrases() {
-            phrasesList.innerHTML = '';
-            
-            if (phrases.length === 0) {
-                const emptyItem = document.createElement('li');
-                emptyItem.className = 'phrase-item';
-                emptyItem.style.textAlign = 'center';
-                emptyItem.style.padding = '30px 20px';
-                emptyItem.style.opacity = '0.7';
-                emptyItem.innerHTML = '<span class="phrase-text">暂无短语，管理员可以添加新短语</span>';
-                phrasesList.appendChild(emptyItem);
-                return;
-            }
-            
-            // 筛选显示的短语
-            const pinnedPhrases = phrases.filter(p => p.pinned);
-            const normalPhrases = phrases.filter(p => !p.pinned);
-            const displayPhrases = isAdminMode 
-                ? [...pinnedPhrases, ...normalPhrases]
-                : [...pinnedPhrases, ...normalPhrases].filter(p => p.visibility === 'public');
-            
-            // 按order排序
-            displayPhrases.sort((a, b) => a.order - b.order);
-            
-            displayPhrases.forEach(phrase => {
-                const li = document.createElement('li');
-                li.className = `phrase-item ${phrase.pinned ? 'pinned' : ''} ${phrase.visibility}`;
-                li.dataset.id = phrase.id;
-                
-                const textSpan = document.createElement('span');
-                textSpan.className = 'phrase-text';
-                textSpan.textContent = phrase.text;
-                li.appendChild(textSpan);
-                
-                // 管理员模式显示控制按钮
-                if (isAdminMode) {
-                    const controlsDiv = document.createElement('div');
-                    controlsDiv.className = 'phrase-controls';
-                    
-                    // 置顶按钮
-                    const pinBtn = document.createElement('button');
-                    pinBtn.className = `phrase-btn pin-btn`;
-                    pinBtn.innerHTML = phrase.pinned ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
-                    pinBtn.title = phrase.pinned ? '取消置顶' : '置顶';
-                    pinBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        togglePin(phrase.id);
-                    });
-                    
-                    // 可见性按钮
-                    const visibilityBtn = document.createElement('button');
-                    visibilityBtn.className = `phrase-btn ${phrase.visibility === 'private' ? 'private-btn' : 'public-btn'}`;
-                    visibilityBtn.innerHTML = phrase.visibility === 'private' ? 
-                        '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
-                    visibilityBtn.title = phrase.visibility === 'private' ? '设为公开' : '设为隐私';
-                    visibilityBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        toggleVisibility(phrase.id);
-                    });
-                    
-                    // 删除按钮
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.className = 'phrase-btn delete-btn';
-                    deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
-                    deleteBtn.title = '删除';
-                    deleteBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        deletePhrase(phrase.id);
-                    });
-                    
-                    controlsDiv.appendChild(pinBtn);
-                    controlsDiv.appendChild(visibilityBtn);
-                    controlsDiv.appendChild(deleteBtn);
-                    li.appendChild(controlsDiv);
+                if (hit >= Math.max(1, Math.ceil(kw.length * 0.6))) {
+                    results.push({ item, score: 1 - hit / kw.length });
                 }
-                
-                phrasesList.appendChild(li);
-            });
-        }
-        
-        // 初始化音乐选择
-        function initMusicSelect() {
-            musicList.forEach(music => {
-                const option = document.createElement('option');
-                option.value = music.id;
-                option.textContent = music.title;
-                musicSelect.appendChild(option);
-            });
-        }
-        
-        // 加载音乐
-        function loadMusic(index) {
-            if (index < 0 || index >= musicList.length) return;
-            
-            currentMusicIndex = index;
-            const music = musicList[currentMusicIndex];
-            
-            audio.pause();
-            audio.currentTime = 0;
-            audio.onerror = null;
-            audio.src = music.src;
-            
-            // 错误处理
-            audio.onerror = function() {
-                showError(`无法加载音乐文件: ${music.title}`);
-                nowPlayingEl.textContent = `加载失败: ${music.title}`;
-                pauseMusic();
-            };
-            
-            // 加载成功
-            audio.oncanplaythrough = function() {
-                nowPlayingEl.textContent = `正在播放: ${music.title}`;
-                totalTimeEl.textContent = music.duration;
-                musicSelect.value = music.id;
-                if (isPlaying) playMusic();
-            };
-            
-            audio.load();
-        }
-        
-        // 播放音乐
-        function playMusic() {
-            if (!audio.src) {
-                loadMusic(0);
-                return;
-            }
-            
-            audio.play().then(() => {
-                isPlaying = true;
-                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            }).catch(error => {
-                showError("播放失败，请检查音乐文件");
-                console.error("播放错误:", error);
-                isPlaying = false;
-                playBtn.innerHTML = '<i class="fas fa-play"></i>';
-            });
-        }
-        
-        // 暂停音乐
-        function pauseMusic() {
-            isPlaying = false;
-            audio.pause();
-            playBtn.innerHTML = '<i class="fas fa-play"></i>';
-        }
-        
-        // 更新进度条
-        function updateProgress(e) {
-            const { duration, currentTime } = e.srcElement;
-            if (duration) {
-                const progressPercent = (currentTime / duration) * 100;
-                progress.style.width = `${progressPercent}%`;
-                
-                // 格式化时间
-                const formatTime = (time) => {
-                    if (isNaN(time)) return "0:00";
-                    const minutes = Math.floor(time / 60);
-                    const seconds = Math.floor(time % 60);
-                    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                };
-                
-                currentTimeEl.textContent = formatTime(currentTime);
-                totalTimeEl.textContent = formatTime(duration);
             }
         }
-        
-        // 设置进度
-        function setProgress(e) {
-            if (!audio.duration || audio.duration === 0) return;
-            
-            const width = this.clientWidth;
-            const clickX = e.offsetX;
-            audio.currentTime = (clickX / width) * audio.duration;
-        }
-        
-        // 上一首
-        function prevMusic() {
-            currentMusicIndex--;
-            if (currentMusicIndex < 0) {
-                currentMusicIndex = musicList.length - 1;
-            }
-            loadMusic(currentMusicIndex);
-        }
-        
-        // 下一首
-        function nextMusic() {
-            currentMusicIndex++;
-            if (currentMusicIndex >= musicList.length) {
-                currentMusicIndex = 0;
-            }
-            loadMusic(currentMusicIndex);
-        }
-        
-        // 切换置顶状态
-        function togglePin(id) {
-            const phrase = phrases.find(p => p.id === id);
-            if (phrase) {
-                phrase.pinned = !phrase.pinned;
-                updatePhraseOrders();
-                savePhrasesToStorage();
-                initPhrases();
-            }
-        }
-        
-        // 切换可见性
-        function toggleVisibility(id) {
-            const phrase = phrases.find(p => p.id === id);
-            if (phrase) {
-                phrase.visibility = phrase.visibility === 'public' ? 'private' : 'public';
-                savePhrasesToStorage();
-                initPhrases();
-            }
-        }
-        
-        // 删除短语
-        function deletePhrase(id) {
-            if (confirm('确定要删除这个短语吗？')) {
-                phrases = phrases.filter(p => p.id !== id);
-                updatePhraseOrders();
-                savePhrasesToStorage();
-                initPhrases();
-            }
-        }
-        
-        // 添加新短语
-        function addPhrase() {
-            const text = phraseInput.value.trim();
-            if (!text) {
-                showError('请输入短语内容');
-                return;
-            }
-            
-            const newPhrase = {
-                id: phraseIdCounter++,
-                text: text,
-                pinned: false,
-                visibility: 'public',
-                order: phrases.length + 1
-            };
-            
-            phrases.push(newPhrase);
-            phraseInput.value = '';
-            savePhrasesToStorage();
-            initPhrases();
-            
-            // 滚动到最新短语
-            setTimeout(() => {
-                const newItem = document.querySelector(`[data-id="${newPhrase.id}"]`);
-                if (newItem) newItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-        }
-        
-        // 更新短语排序
-        function updatePhraseOrders() {
-            const pinnedPhrases = phrases.filter(p => p.pinned);
-            const normalPhrases = phrases.filter(p => !p.pinned);
-            
-            pinnedPhrases.forEach((phrase, index) => {
-                phrase.order = index + 1;
-            });
-            
-            normalPhrases.forEach((phrase, index) => {
-                phrase.order = pinnedPhrases.length + index + 1;
-            });
-        }
-        
-        // 事件监听
-        playBtn.addEventListener('click', () => {
-            if (audio.src) {
-                isPlaying ? pauseMusic() : playMusic();
-            } else {
-                loadMusic(0);
-                setTimeout(() => playMusic(), 500);
-            }
+        results.sort((a, b) => a.score - b.score);
+        return results;
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, function (c) {
+            return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
         });
-        
-        prevBtn.addEventListener('click', prevMusic);
-        nextBtn.addEventListener('click', nextMusic);
-        
-        musicSelect.addEventListener('change', (e) => {
-            const selectedIndex = parseInt(e.target.value) - 1;
-            if (selectedIndex >= 0) {
-                loadMusic(selectedIndex);
-                if (!isPlaying) setTimeout(() => playMusic(), 500);
-            }
-        });
-        
-        audio.addEventListener('timeupdate', updateProgress);
-        audio.addEventListener('ended', nextMusic);
-        progressBar.addEventListener('click', setProgress);
-        
-        addPhraseBtn.addEventListener('click', addPhrase);
-        phraseInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addPhrase();
-        });
-        
-        modalCloseBtn.addEventListener('click', () => {
-            modeModal.style.display = 'none';
-        });
-        
-        modeModal.addEventListener('click', (e) => {
-            if (e.target === modeModal) modeModal.style.display = 'none';
-        });
-        
-        // 初始化
-        function init() {
-            loadPhrasesFromStorage();
-            initMusicSelect();
-            
-            if (isAdminMode) {
-                adminIndicator.style.display = 'block';
-                phraseInputContainer.style.display = 'block';
-            }
-            
-            initPhrases();
-            loadMusic(0);
-            pauseMusic();
-            
-            if (!sessionStorage.getItem('modeAlertShown')) {
-                setTimeout(showModeAlert, 500);
-            }
-            
-            // 检测设备类型
-            const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isTablet = /iPad|Android(?!.*Mobile)|Tablet/i.test(navigator.userAgent);
-            if (isMobile) document.body.classList.add('mobile-device');
-            else if (isTablet) document.body.classList.add('tablet-device');
-            else document.body.classList.add('desktop-device');
+    }
+
+    function highlight(text, keyword) {
+        const safeText = escapeHtml(text);
+        if (!keyword) return safeText;
+        const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        try {
+            const regex = new RegExp(`(${safeKeyword})`, 'gi');
+            return safeText.replace(regex, '<mark>$1</mark>');
+        } catch (e) {
+            return safeText;
         }
-        
-        // 页面加载完成后初始化
-        window.addEventListener('DOMContentLoaded', init);
-    </script>
+    }
+
+    function render(keyword) {
+        if (!keyword) {
+            result.innerHTML = "";
+            clearBtn.classList.remove("show");
+            return;
+        }
+
+        clearBtn.classList.add("show");
+
+        let matches;
+        if (fuse) {
+            matches = fuse.search(keyword);
+        } else {
+            matches = simpleSearch(keyword);
+        }
+        matches = matches.slice(0, 50);
+
+        if (matches.length === 0) {
+            result.innerHTML = `
+                <div class="empty-tip">
+                    <span class="icon">🔍</span>
+                  
+                     没有找到相关题目，请换个关键词吧!
+                 
+                </div>`;
+            return;
+        }
+
+        const countTip = `<div class="count-tip">共找到 ${matches.length} 条结果</div>`;
+        const cards = matches.map(m => {
+            const item = m.item;
+            return `
+            <div class="card">
+                <div class="question">${highlight(item.q, keyword)}</div>
+                <div class="answer">答案：${escapeHtml(item.answer)}</div>
+            </div>`;
+        }).join("");
+
+        result.innerHTML = countTip + cards;
+    }
+
+    // 点击搜索按钮
+    searchBtn.addEventListener("click", () => {
+        render(input.value.trim());
+    });
+
+    // 清空按钮
+    clearBtn.addEventListener("click", () => {
+        input.value = "";
+        input.focus();
+        render("");
+    });
+
+    // 输入框有内容时显示清空按钮
+    input.addEventListener("input", () => {
+        if (input.value.trim()) {
+            clearBtn.classList.add("show");
+        } else {
+            clearBtn.classList.remove("show");
+            result.innerHTML = "";
+        }
+    });
+</script>
 </body>
 </html>
-
-
